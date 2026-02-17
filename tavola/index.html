@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tavola Redonda • Entrar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-wrap {
+            padding: 48px 28px;
+            min-height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn .5s ease-out;
+        }
+        .login-head { text-align: center; margin-bottom: 44px; }
+        .login-title { font-family: var(--font-d); font-size: 38px; font-weight: 700; line-height: 1.2; margin-bottom: 10px; }
+        .login-sub { color: var(--text2); font-size: 15px; }
+
+        @media (min-width: 768px) {
+            .login-wrap { max-width: 480px; margin: 0 auto; }
+            .login-title { font-size: 44px; }
+        }
+    </style>
+</head>
+<body>
+<div class="page">
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">🔒</div>
+                <div>
+                    <h1>Tavola Redonda</h1>
+                    <p>Chat Privado</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="login-wrap">
+        <div class="login-head">
+            <h2 class="login-title">Bem-vindo de volta</h2>
+            <p class="login-sub">Entre para conversar com a família</p>
+        </div>
+
+        <div id="errBanner" class="banner error"></div>
+
+        <form id="loginForm">
+            <div class="field">
+                <label class="label">Usuário</label>
+                <input type="text" id="inpUser" class="input" placeholder="Digite seu usuário" autocomplete="username">
+            </div>
+            <div class="field">
+                <label class="label">Senha</label>
+                <input type="password" id="inpPwd" class="input" placeholder="Digite sua senha" autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary">Entrar</button>
+        </form>
+    </div>
+</div>
+<script src="db.js"></script>
+<script src="auth.js"></script>
+</body>
+</html>
