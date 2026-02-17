@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tavola Redonda • Chat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        html, body, .page { height: 100%; }
+        .page { display: flex; flex-direction: column; }
+        .layout { flex: 1; overflow: hidden; }
+        .chat-col { height: 100%; }
+
+        .sidebar { padding: 0; }
+        .sidebar-section { padding: 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-section:last-child { border-bottom: none; }
+
+        .member-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 12px; border-radius: 10px; cursor: pointer;
+            transition: background .2s;
+        }
+        .member-row:hover { background: var(--surface2); }
+        .member-row-name { font-weight: 500; font-size: 14px; }
+        .member-row-status { font-size: 12px; color: var(--success); }
+    </style>
+</head>
+<body>
+<div class="page" id="pageRoot">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">
+                <div class="logo-icon">🔒</div>
+                <div>
+                    <h1>Tavola Redonda</h1>
+                    <p>Chat Privado</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Barra do usuário -->
+    <div class="user-bar">
+        <div class="user-bar-info">
+            <div class="avatar lg" id="userAvatar"></div>
+            <div>
+                <div class="user-bar-name" id="userName"></div>
+                <div class="user-bar-status">🟢 Online</div>
+            </div>
+        </div>
+        <button class="btn-logout" onclick="doLogout()">Sair</button>
+    </div>
+
+    <!-- Banners -->
+    <div id="successBanner" class="banner success" style="margin:12px 18px 0;"></div>
+    <div id="errBanner"     class="banner error"   style="margin:8px 18px 0;"></div>
+
+    <!-- Layout -->
+    <div class="layout">
+
+        <!-- ══ SIDEBAR (desktop) ══ -->
+        <aside class="sidebar" id="desktopSidebar">
+
+            <!-- Alterar MINHA senha -->
+            <div class="sidebar-section">
+                <div class="section-title" style="margin-bottom:14px;">🔑 Alterar Minha Senha</div>
+                <div class="field">
+                    <label class="label">Nova Senha</label>
+                    <input type="password" id="myPwd_d" class="input" placeholder="Nova senha">
+                </div>
+                <button class="btn btn-primary" onclick="changeMyPwd('myPwd_d')">Alterar Minha Senha</button>
+            </div>
+
+            <!-- Lista de membros (só nomes, SEM senhas) -->
+            <div class="sidebar-section">
+                <div class="section-title" style="margin-bottom:12px;">👥 Membros</div>
+                <div id="memberList_d"></div>
+            </div>
+
+        </aside>
+
+        <!-- ══ COLUNA DO CHAT ══ -->
+        <div class="chat-col">
+
+            <!-- Painel do usuário no mobile -->
+            <div class="mobile-panel" style="padding:18px; border-bottom:1px solid var(--border);">
+
+                <div class="section-title" style="margin-bottom:10px;">🔑 Alterar Minha Senha</div>
+                <div class="card">
+                    <div class="field">
+                        <label class="label">Nova Senha</label>
+                        <input type="password" id="myPwd_m" class="input" placeholder="Nova senha">
+                    </div>
+                    <button class="btn btn-primary" onclick="changeMyPwd('myPwd_m')">Alterar Minha Senha</button>
+                </div>
+
+                <div class="section-title" style="margin:16px 0 10px;">👥 Membros</div>
+                <div class="card" style="padding:8px;">
+                    <div id="memberList_m"></div>
+                </div>
+
+            </div>
+
+            <!-- Seletor de conversa -->
+            <div class="mode-bar">
+                <span class="mode-label">Conversando:</span>
+                <span class="mode-value" id="modeLabel">Grupo • Todos</span>
+                <button class="btn-mode" onclick="openModeModal()">Alterar</button>
+            </div>
+
+            <!-- Mensagens -->
+            <div class="msg-wrap" id="msgWrap">
+                <div class="expire-bar">⏱️ Mensagens apagadas automaticamente após 24h</div>
+                <div id="msgList"></div>
+            </div>
+
+            <!-- Input -->
+            <div class="msg-input-bar">
+                <div class="msg-input-row">
+                    <textarea id="msgInput" class="msg-textarea" rows="1"
+                        placeholder="Digite uma mensagem..."
+                        onkeypress="onMsgKey(event)"
+                        oninput="autoResize(this)"></textarea>
+                    <button class="btn-send" onclick="sendMsg()">➤</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal seleção de conversa -->
+<div id="modeModal" class="modal-bg" onclick="closeModeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-title">Selecionar Conversa</div>
+        <div style="background:var(--surface2); border-radius:12px; overflow:hidden; border:1px solid var(--border);">
+            <div class="user-row" style="cursor:pointer;" onclick="setMode('group')">
+                <div class="user-row-info">
+                    <div class="avatar">👥</div>
+                    <div>
+                        <div class="user-name-text">Grupo • Todos</div>
+                        <div style="font-size:12px;color:var(--text2);">Todos veem as mensagens</div>
+                    </div>
+                </div>
+            </div>
+            <div id="modalMemberList"></div>
+        </div>
+        <button class="btn btn-secondary" onclick="closeModeModal()" style="margin-top:14px;">Fechar</button>
+    </div>
+</div>
+
+<script src="db.js"></script>
+<script src="user.js"></script>
+</body>
+</html>
